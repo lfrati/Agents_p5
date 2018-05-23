@@ -1,0 +1,25 @@
+{
+  "name": "neuroevo_p5",
+  "version": "1.0.0",
+  "description": "Neuroevolution experiments using p5.js",
+  "main": "lib/sketch.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LapoFrati/NeuroEvo_p5.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LapoFrati/NeuroEvo_p5/issues"
+  },
+  "homepage": "https://github.com/LapoFrati/NeuroEvo_p5#readme",
+  "devDependencies": {
+    "jest": "^22.4.4"
+  }
+}
