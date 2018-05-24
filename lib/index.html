@@ -5,9 +5,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
+	<link rel="stylesheet" type="text/css" href="style.css">
 	<title>nn_viz</title>
-
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<script src="../p5/p5.js"></script>
 	<script src="../p5/p5.dom.js"></script>
@@ -18,42 +17,9 @@
 	<script language="javascript" type="text/javascript" src="world.js"></script>
 	<script language="javascript" type="text/javascript" src="quadtree.js"></script>
 	<script language="javascript" type="text/javascript" src="linkedlist.js"></script>
-
-
-
-	<style type="text/css">
-		.wrapper {
-			overflow: auto
-		}
-
-		.divLeft {
-			width: 200px;
-			display: block;
-			float: left;
-		}
-
-		.divRight {
-			width: 100px;
-			display: block;
-			float: right;
-		}
-
-		body {
-			margin: 0;
-			margin-left: 45px;
-			padding: 0;
-			overflow: hidden;
-		}
-
-		canvas {
-			margin: auto;
-		}
-	</style>
 </head>
 
 <body>
-
-
 	<div id="canvascontainer"></div>
 	<div class="wrapper">
 		<div class='divLeft' id="interface">
@@ -76,9 +42,8 @@
 				<input id="stop" type="checkbox"></input>
 			</p>
 		</div>
-		<div class='divLeft' id="chart" style="width:500px;height:250px;"></div>
+		<div class='divLeft' id="chart"></div>
 	</div>
-
 </body>
 
 </html>
