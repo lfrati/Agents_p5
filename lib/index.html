@@ -6,12 +6,18 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<title>nn_viz</title>
+	<title>NeuroEvo</title>
+	<link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+	<!-- Load Plotly.js -->
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-	<script src="../p5/p5.js"></script>
-	<script src="../p5/p5.dom.js"></script>
-	<script src="../p5/p5.sound.js"></script>
-	<script src="sketch.js"></script>
+	<!-- Load TensorFlow.js -->
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2">
+	</script>
+	<!-- Load p5.js -->
+	<script language="javascript" type="text/javascript" src="../p5/p5.js"></script>
+	<script language="javascript" type="text/javascript" src="../p5/p5.dom.js"></script>
+	<script language="javascript" type="text/javascript" src="../p5/p5.sound.js"></script>
+	<script language="javascript" type="text/javascript" src="sketch.js"></script>
 	<script language="javascript" type="text/javascript" src="agent.js"></script>
 	<script language="javascript" type="text/javascript" src="sensors.js"></script>
 	<script language="javascript" type="text/javascript" src="world.js"></script>
@@ -28,7 +34,6 @@
 				<input id="speedSlider" type="range" min="1" max="100" value="1">
 				<span id="speed">1</span>
 			</p>
-
 			<p>
 				Debug:
 				<input id="debug" type="checkbox"></input>
@@ -40,6 +45,10 @@
 			<p>
 				Freeze:
 				<input id="stop" type="checkbox"></input>
+			</p>
+			<p>
+				Stats:
+				<input id="stats" type="checkbox"></input>
 			</p>
 		</div>
 		<div class='divLeft' id="chart"></div>
