@@ -8,6 +8,7 @@
 
 	<title>nn_viz</title>
 
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<script src="../p5/p5.js"></script>
 	<script src="../p5/p5.dom.js"></script>
 	<script src="../p5/p5.sound.js"></script>
@@ -18,7 +19,25 @@
 	<script language="javascript" type="text/javascript" src="quadtree.js"></script>
 	<script language="javascript" type="text/javascript" src="linkedlist.js"></script>
 
-	<style>
+
+
+	<style type="text/css">
+		.wrapper {
+			overflow: auto
+		}
+
+		.divLeft {
+			width: 200px;
+			display: block;
+			float: left;
+		}
+
+		.divRight {
+			width: 100px;
+			display: block;
+			float: right;
+		}
+
 		body {
 			margin: 0;
 			margin-left: 45px;
@@ -33,27 +52,33 @@
 </head>
 
 <body>
-	<div id="canvascontainer"></div>
-	<div id="interface">
-		<p>
-			speed:
-			<input id="speedSlider" type="range" min="1" max="100" value="1">
-			<span id="speed">1</span>
-		</p>
 
-		<p>
-			Debug:
-			<input id="debug" type="checkbox"></input>
-		</p>
-		<p>
-			Render:
-			<input id="show" type="checkbox" checked></input>
-		</p>
-		<p>
-			Freeze:
-			<input id="stop" type="checkbox"></input>
-		</p>
+
+	<div id="canvascontainer"></div>
+	<div class="wrapper">
+		<div class='divLeft' id="interface">
+			<p>
+				Speed:
+				<input id="speedSlider" type="range" min="1" max="100" value="1">
+				<span id="speed">1</span>
+			</p>
+
+			<p>
+				Debug:
+				<input id="debug" type="checkbox"></input>
+			</p>
+			<p>
+				Render:
+				<input id="show" type="checkbox" checked></input>
+			</p>
+			<p>
+				Freeze:
+				<input id="stop" type="checkbox"></input>
+			</p>
+		</div>
+		<div class='divLeft' id="chart" style="width:500px;height:250px;"></div>
 	</div>
+
 </body>
 
 </html>
