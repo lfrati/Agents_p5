@@ -3,9 +3,12 @@
 }
 
 .divLeft {
-    width: 200px;
     display: block;
     float: left;
+    margin: 0;
+    margin-left: 25px;
+    margin-top: 25px;
+    padding: 0;
 }
 
 .divRight {
@@ -16,8 +19,8 @@
 
 body {
     margin: 0;
-    margin-left: 25px;
-    margin-top: 25px;
+    margin-left: 5px;
+    margin-top: 5px;
     padding: 0;
     overflow: hidden;
     font-family: 'Courier New', Courier, monospace
