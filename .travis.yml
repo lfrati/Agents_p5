@@ -2,6 +2,9 @@ language: node_js
 node_js:
  - "node"
 
- cache:
+cache:
   directories:
     - "node_modules"
+
+script:
+  - npm test
