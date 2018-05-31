@@ -1,26 +1,33 @@
 {
-  "name": "neuroevo_p5",
-  "version": "1.0.0",
-  "description": "Neuroevolution experiments using p5.js",
-  "main": "lib/sketch.js",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LapoFrati/NeuroEvo_p5.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/LapoFrati/NeuroEvo_p5/issues"
-  },
-  "homepage": "https://github.com/LapoFrati/NeuroEvo_p5#readme",
-  "devDependencies": {
-    "@tensorflow/tfjs": "^0.11.2",
-    "jest": "^22.4.4"
-  }
+    "name": "neuroevo_p5",
+    "version": "1.0.0",
+    "description": "Neuroevolution experiments using p5.js",
+    "main": "lib/sketch.js",
+    "directories": {
+        "lib": "lib"
+    },
+    "scripts": {
+        "test": "jest",
+        "karma": "karma start --browsers ChromeHeadless karma.conf.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LapoFrati/NeuroEvo_p5.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/LapoFrati/NeuroEvo_p5/issues"
+    },
+    "homepage": "https://github.com/LapoFrati/NeuroEvo_p5#readme",
+    "devDependencies": {
+        "@tensorflow/tfjs": "^0.11.2",
+        "chai": "^4.1.2",
+        "jest": "^22.4.4",
+        "karma": "^2.0.2",
+        "karma-chai": "^0.1.0",
+        "karma-chrome-launcher": "^2.2.0",
+        "karma-mocha": "^1.3.0",
+        "mocha": "^5.2.0"
+    }
 }

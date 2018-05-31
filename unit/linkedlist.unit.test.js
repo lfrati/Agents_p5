@@ -1,4 +1,4 @@
-const linkedlist = require('./linkedlist');
+const linkedlist = require('../src/linkedlist');
 
 test('Test length of an empty list', () => {
     let l = new linkedlist();

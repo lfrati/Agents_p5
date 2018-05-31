@@ -18,9 +18,9 @@ let width = 640;
 let height = 480;
 let world;
 
-let numAgents = 10;
+let numAgents = 1;
 
-let foodAmount = 100;
+let foodAmount = 10;
 let foodBuffer = 50;
 let foodSize = 8;
 
@@ -31,6 +31,7 @@ let epoch = 0;
 
 let worldBusy = false;
 
+//p5.disableFriendlyErrors = true;
 function setup() {
     // Operations are too small for GPU
     tf.setBackend('cpu');
