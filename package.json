@@ -7,8 +7,7 @@
         "lib": "lib"
     },
     "scripts": {
-        "test": "jest",
-        "karma": "karma start --browsers ChromeHeadless karma.conf.js"
+        "test": "jest"
     },
     "repository": {
         "type": "git",
