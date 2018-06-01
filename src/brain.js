@@ -4,13 +4,26 @@ class Brain {
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
+        let inputConfig = { shape: [inputSize] };
+        let hiddenConfig = {
+            units: hiddenSize,
+            activation: 'tanh',
+            kernelInitializer: 'glorotNormal',
+            biasInitializer: 'glorotNormal'
+        };
+        let outConfig = {
+            units: outputSize,
+            activation: 'linear',
+            kernelInitializer: 'glorotNormal',
+            biasInitializer: 'glorotNormal'
+        };
         this.model = tf.tidy(() => {
             // Define input, which has a size of 5 (not including batch dimension).
-            const input = tf.input({ shape: [inputSize] });
+            const input = tf.input(inputConfig);
             // First dense layer uses relu activation.
-            const denseLayer1 = tf.layers.dense({ units: hiddenSize, activation: 'relu' });
+            const denseLayer1 = tf.layers.dense(hiddenConfig);
             // Second dense layer uses linear activation.
-            const denseLayer2 = tf.layers.dense({ units: outputSize, activation: 'linear' });
+            const denseLayer2 = tf.layers.dense(outConfig);
             // Obtain the output symbolic tensor by applying the layers on the input.
             const output = denseLayer2.apply(denseLayer1.apply(input));
             return tf.model({ inputs: input, outputs: output });
@@ -27,36 +40,44 @@ class Brain {
     }
 
     mix(brain1, brain2) {
-        if (Math.random() < 0.5) {
-            this.mutate(brain1);
-        } else {
-            this.mutate(brain2);
-        }
-    }
-
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        this.mutate(brain1);
+        //this.mutate(brain2);
     }
 
     mutate(parent) {
         const mutated = parent.model.getWeights().reduce((mutations, layer) => {
-            const buffer = layer.buffer();
-            if (layer.shape.length === 2) {
-                const [row, col] = layer.shape;
-                const mutRow = this.getRandomInt(0, row);
-                const mutCol = this.getRandomInt(0, col);
-                const oldVal = buffer.get(mutRow, mutCol);
-                buffer.set(mutRow, mutCol, oldVal + Math.random() * 2 - 1);
-            } else {
-                const [row] = layer.shape;
-                const mutRow = this.getRandomInt(0, row);
-                const oldVal = buffer.get(mutRow);
-                buffer.set(mutRow, oldVal + Math.random() * 2 - 1);
+            const data = Array.from(layer.dataSync());
+            const numMutations = getRandomInt(0, 3);
+            for (let i = 0; i < numMutations; i++) {
+                const loc = getRandomInt(0, data.length);
+                const newVal = data[loc] + Math.random() * 2 - 1;
+                data[loc] = newVal;
             }
-            mutations.push(buffer.toTensor());
+            let newLayer = tf.tensor(data, layer.shape);
+            // const original = layer.dataSync();
+            // const mutated = [];
+            // for (let i = 0; i < original.length; i++) {
+            //     let val = original[i];
+            //     if (Math.random() < 0.1) {
+            //         val += Math.random() * 2 - 1;
+            //     }
+            //     mutated.push(val);
+            // }
+            // let newLayer = tf.tensor(mutated, layer.shape);
+
+            // console.log(
+            //     newLayer
+            //         .sub(layer)
+            //         .sum()
+            //         .dataSync()[0]
+            // );
+
+            mutations.push(newLayer);
             return mutations;
         }, []);
+
         this.model.setWeights(mutated);
+
         mutated.forEach(element => {
             element.dispose();
         });

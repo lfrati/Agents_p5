@@ -31,6 +31,18 @@ let epoch = 0;
 
 let worldBusy = false;
 
+/**
+ * Returns a random integer between min (inclusive) and max (exclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function mod(n, m) {
+    return (n % m + m) % m;
+}
+
 //p5.disableFriendlyErrors = true;
 function setup() {
     // Operations are too small for GPU
@@ -183,7 +195,7 @@ function checkMousePressed() {
 }
 
 function draw() {
-    if (worldBusy) return;
+    if (worldBusy || world.agents.length <= 0) return;
     // How fast should we speed up
     let cycles = speedSlider.value();
     speedSpan.html(cycles);
