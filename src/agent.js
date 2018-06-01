@@ -54,7 +54,7 @@ class Agent {
         this.acceleration.mult(0);
         // Decrease health
         this.health = constrain(this.health, 0, this.maxhealth);
-        this.health -= this.metabolicRate * this.velocity.mag() / this.maxspeed;
+        this.health -= this.metabolicRate;
         // Increase score
         this.age += 1;
     }
