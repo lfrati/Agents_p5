@@ -19,11 +19,12 @@ class Agent {
         this.numSensors = 8;
         this.sensingRange = 100;
         this.eyes = new Eyes(this.numSensors, this.sensingRange);
-        this.brain = new Brain(this.numSensors, 2);
+        this.brain = new Brain(this.numSensors, 32, 2);
 
         this.mutationMean = 0;
         this.mutationStd = 0.1;
-        this.metabolicRate = 0.01;
+        this.metabolicRate = 0.02;
+        this.hasReproduced = false;
     }
 
     // Add force to acceleration
@@ -54,7 +55,7 @@ class Agent {
         this.acceleration.mult(0);
         // Decrease health
         this.health = constrain(this.health, 0, this.maxhealth);
-        this.health -= this.metabolicRate * this.velocity.mag() / this.maxspeed;
+        this.health -= this.metabolicRate;
         // Increase score
         this.age += 1;
     }
@@ -79,6 +80,7 @@ class Agent {
         let next = { alive: [], dead: [] };
 
         if (this.health > this.starthealth * 2) {
+            this.hasReproduced = true;
             const child = new Agent();
 
             let partners = world.searchPartners(this.position, this.r);
@@ -102,6 +104,8 @@ class Agent {
                 } else {
                     child.brain.mutate(this.brain);
                 }
+            } else {
+                child.brain.mutate(this.brain);
             }
             this.health -= child.starthealth;
             next.alive.push(child);
@@ -139,7 +143,10 @@ class Agent {
 
     display() {
         // Color based on health
-        let col = lerpColor(this.red, this.green, this.health);
+        let col = this.hasReproduced
+            ? lerpColor(this.red, this.green, this.health)
+            : color(132, 131, 53);
+        console.log(col);
         // Rotate in the direction of velocity
         let theta = this.velocity.heading() + PI / 2;
         // Translate to current location and draw a triangle
@@ -155,6 +162,10 @@ class Agent {
             stroke(200, 200, 0);
             strokeWeight(2);
             line(0, 0, v.x, v.y);
+            // Display score next to each vehicle
+            noStroke();
+            fill(255, 200);
+            text(int(this.age), 10, 0);
         }
 
         rotate(theta);

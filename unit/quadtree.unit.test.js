@@ -1,4 +1,4 @@
-const { Point, Rectangle, Circle, QuadTree } = require('./quadtree.js');
+const { Point, Rectangle, Circle, QuadTree } = require('../src/quadtree.js');
 
 function putPoint(x, y, quad) {
     let pt = new Point(x, y);

@@ -121,9 +121,9 @@ class World {
     displayFood() {
         let points = this.foodLinkedList.getAll();
         for (let point of points) {
-            stroke(255, 0, 255);
-            fill(255);
-            ellipse(point.x, point.y, 10);
+            fill(100, 255, 100, 200);
+            stroke(100, 255, 100);
+            ellipse(point.x, point.y, this.foodRadius);
         }
     }
 }
