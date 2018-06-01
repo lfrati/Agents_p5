@@ -19,7 +19,7 @@ class Agent {
         this.numSensors = 8;
         this.sensingRange = 100;
         this.eyes = new Eyes(this.numSensors, this.sensingRange);
-        this.brain = new Brain(this.numSensors, 2);
+        this.brain = new Brain(this.numSensors, 32, 2);
 
         this.mutationMean = 0;
         this.mutationStd = 0.1;

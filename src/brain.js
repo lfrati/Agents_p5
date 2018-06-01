@@ -1,108 +1,70 @@
 //const tf = require('@tensorflow/tfjs');
 class Brain {
-    constructor(inputSize, outputSize) {
+    constructor(inputSize, hiddenSize, outputSize) {
         this.inputSize = inputSize;
+        this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
-        this.xavier = Math.sqrt(2 / (inputSize + outputSize));
-        this.weights = tf.randomNormal([inputSize, outputSize], 0, this.xavier);
-        this.bias = tf.randomNormal([inputSize, 1], 0, this.xavier);
+        this.model = tf.tidy(() => {
+            // Define input, which has a size of 5 (not including batch dimension).
+            const input = tf.input({ shape: [inputSize] });
+            // First dense layer uses relu activation.
+            const denseLayer1 = tf.layers.dense({ units: hiddenSize, activation: 'relu' });
+            // Second dense layer uses linear activation.
+            const denseLayer2 = tf.layers.dense({ units: outputSize, activation: 'linear' });
+            // Obtain the output symbolic tensor by applying the layers on the input.
+            const output = denseLayer2.apply(denseLayer1.apply(input));
+            return tf.model({ inputs: input, outputs: output });
+        });
+        // Create the model based on the inputs.
     }
 
     think(input) {
         return tf.tidy(() => {
-            const data = tf.tensor2d(input, [this.inputSize, 1]);
-            const activation = data
-                .mul(this.weights)
-                .add(this.bias)
-                .sum(0);
+            const data = tf.tensor2d(input, [1, this.inputSize]);
+            let activation = this.model.predict(data);
             return Array.from(activation.dataSync());
         });
     }
 
     mix(brain1, brain2) {
-        // Save previous values to dispose them after update
-        const old_w = this.weights;
-        const old_b = this.bias;
-        // tf.tidy(() => {
-        //     const positive_w = tf.randomUniform([this.inputSize, this.outputSize]).step(0);
-        //     const negative_w = tf.onesLike(positive_w).sub(positive_w);
-        //     const father_w = brain1.weights.mul(positive_w);
-        //     const mother_w = brain2.weights.mul(negative_w);
-        //     const recombinant_w = father_w.add(mother_w);
-        //     const prob_w = -(this.inputSize * this.outputSize) + 10;
-        //     const mutation_w = tf
-        //         .randomUniform([this.inputSize, this.outputSize], prob_w)
-        //         .step(0)
-        //         .mul(this.weights);
-        //     const mutated_recomb_w = recombinant_w.add(mutation_w);
-        //     this.weights = tf.keep(mutated_recomb_w);
+        if (Math.random() < 0.5) {
+            this.mutate(brain1);
+        } else {
+            this.mutate(brain2);
+        }
+    }
 
-        //     const positive_b = tf.randomUniform([this.inputSize, 1]).step(0);
-        //     const negative_b = tf.onesLike(positive_b).sub(positive_b);
-        //     const father_b = brain1.bias.mul(positive_b);
-        //     const mother_b = brain2.bias.mul(negative_b);
-        //     const recombinant_b = father_b.add(mother_b);
-        //     const prob_b = -this.inputSize + 10;
-        //     const mutation_b = tf
-        //         .randomUniform([this.inputSize, 1], prob_b)
-        //         .step(0)
-        //         .mul(this.bias);
-        //     const mutated_recomb_b = recombinant_b.add(mutation_b);
-        //     this.bias = tf.keep(mutated_recomb_b);
-        // });
-        tf.tidy(() => {
-            const positive_w = tf.randomUniform([this.inputSize, this.outputSize]).step(0);
-            const negative_w = tf.onesLike(positive_w).sub(positive_w);
-            const father_w = brain1.weights.mul(positive_w);
-            const mother_w = brain2.weights.mul(negative_w);
-            const recombinant_w = father_w.add(mother_w);
-            const mutated_recomb_w = recombinant_w.add(this.weights);
-            this.weights = tf.keep(mutated_recomb_w);
-
-            const positive_b = tf.randomUniform([this.inputSize, 1]).step(0);
-            const negative_b = tf.onesLike(positive_b).sub(positive_b);
-            const father_b = brain1.bias.mul(positive_b);
-            const mother_b = brain2.bias.mul(negative_b);
-            const recombinant_b = father_b.add(mother_b);
-            const mutated_recomb_b = recombinant_b.add(this.bias);
-            this.bias = tf.keep(mutated_recomb_b);
-        });
-
-        old_w.dispose();
-        old_b.dispose();
+    getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     mutate(parent) {
-        const old_w = this.weights;
-        const old_b = this.bias;
-        // tf.tidy(() => {
-        //     const prob_w = -(this.inputSize * this.outputSize) + 10;
-        //     const mutation_w = tf
-        //         .randomUniform([this.inputSize, this.outputSize], prob_w)
-        //         .step(0)
-        //         .mul(this.weights);
-        //     const mutated_recomb_w = parent.weights.add(mutation_w);
-        //     this.weights = tf.keep(mutated_recomb_w);
-
-        //     const prob_b = -this.inputSize + 10;
-        //     const mutation_b = tf
-        //         .randomUniform([this.inputSize, 1], prob_b)
-        //         .step(0)
-        //         .mul(this.bias);
-        //     const mutated_recomb_b = parent.bias.add(mutation_b);
-        //     this.bias = tf.keep(mutated_recomb_b);
-        // });
-        tf.tidy(() => {
-            this.weights = tf.keep(parent.weights.add(this.weights));
-            this.bias = tf.keep(parent.bias.add(this.bias));
+        const mutated = parent.model.getWeights().reduce((mutations, layer) => {
+            const buffer = layer.buffer();
+            if (layer.shape.length === 2) {
+                const [row, col] = layer.shape;
+                const mutRow = this.getRandomInt(0, row);
+                const mutCol = this.getRandomInt(0, col);
+                const oldVal = buffer.get(mutRow, mutCol);
+                buffer.set(mutRow, mutCol, oldVal + Math.random() * 2 - 1);
+            } else {
+                const [row] = layer.shape;
+                const mutRow = this.getRandomInt(0, row);
+                const oldVal = buffer.get(mutRow);
+                buffer.set(mutRow, oldVal + Math.random() * 2 - 1);
+            }
+            mutations.push(buffer.toTensor());
+            return mutations;
+        }, []);
+        this.model.setWeights(mutated);
+        mutated.forEach(element => {
+            element.dispose();
         });
-        old_w.dispose();
-        old_b.dispose();
     }
 
     die() {
-        this.weights.dispose();
-        this.bias.dispose();
+        this.model.getWeights().forEach(element => element.dispose());
+        //this.bias.dispose();
     }
 
     toJSON() {

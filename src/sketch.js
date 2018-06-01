@@ -18,9 +18,9 @@ let width = 640;
 let height = 480;
 let world;
 
-let numAgents = 1;
+let numAgents = 10;
 
-let foodAmount = 10;
+let foodAmount = 100;
 let foodBuffer = 50;
 let foodSize = 8;
 
