@@ -19,14 +19,28 @@ function mod(n, m) {
  * iterations is O(np) so it's pretty fast for small p values.
  */
 function getBinomial(n, p) {
-    const log_q = Math.log(1.0 - p);
-    var x = 0;
-    var sum = 0;
-    while (true) {
-        sum += Math.log(Math.random()) / (n - x);
-        if (sum < log_q) {
-            return x;
+    if (p < 0.5) {
+        const log_q = Math.log(1.0 - p);
+        var x = 0;
+        var sum = 0;
+        while (true) {
+            sum += Math.log(Math.random()) / (n - x);
+            if (sum < log_q) {
+                return x;
+            }
+            x += 1;
         }
-        x += 1;
+    } else {
+        p = 1 - p;
+        const log_q = Math.log(1.0 - p);
+        var x = 0;
+        var sum = 0;
+        while (true) {
+            sum += Math.log(Math.random()) / (n - x);
+            if (sum < log_q) {
+                return n - x;
+            }
+            x += 1;
+        }
     }
 }
