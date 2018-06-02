@@ -1,5 +1,3 @@
-////<reference path="../p5.d/p5.global-mode.d.ts"/>
-
 // Checkbox to show additional info
 let debug;
 let show;
@@ -29,13 +27,50 @@ let foodGrowthRate = 1;
 
 let epoch = 0;
 
-let worldBusy = false;
+function deleteINDEXEDDB(databaseName) {
+    var req = indexedDB.deleteDatabase(databaseName);
+    req.onsuccess = function() {
+        console.log('Deleted ' + databaseName + ' successfully');
+    };
+    req.onerror = function() {
+        console.log("Couldn't delete " + databaseName);
+    };
+    req.onblocked = function() {
+        console.log("Couldn't delete " + databaseName + ' due to the operation being blocked');
+    };
+}
 
-function timeIt(fun) {
-    var t0 = performance.now();
-    fun();
-    var t1 = performance.now();
-    console.log('Call to doSomething took ' + (t1 - t0) + ' milliseconds.');
+async function loadModels() {
+    let newAgents = [];
+    let models = await tf.io.listModels();
+    console.log('Loading Population');
+    for (const [key, value] of Object.entries(models)) {
+        let model = await tf.loadModel(key);
+        const agent = new Agent();
+        agent.brain.model = model;
+        newAgents.push(agent);
+    }
+    console.log('Population loaded');
+
+    if (newAgents.length > 0) {
+        world.agents = [];
+        world.agents = newAgents;
+    }
+}
+
+function saveModels() {
+    var counter = 0;
+    console.log('Saving population at epoch ' + epoch);
+    let promises = world.agents.reduce((promises, agent) => {
+        promises.push(
+            agent.brain.model.save('indexeddb://' + epoch + '-' + agent.age + '-' + counter)
+        );
+        counter++;
+        return promises;
+    }, []);
+    Promise.all(promises).then(() => {
+        console.log('Population saved');
+    });
 }
 
 //p5.disableFriendlyErrors = true;
@@ -55,34 +90,19 @@ function setup() {
 
     save = createButton('save')
         .position(10, 10)
-        .mousePressed(() => {
-            worldBusy = true;
-            var today = new Date();
-            var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-            var time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-            var dateTime = date + '_' + time;
-            let state = world.saveState();
-            saveJSON(state, 'NeuroEvo_' + dateTime + '.json');
-            worldBusy = false;
-        });
+        .mousePressed(saveModels);
 
-    load = createFileInput(file => {
-        if (file.subtype === 'json') {
-            loadJSON(file.data, json => {
-                worldBusy = true;
-                world.agents = [];
-                for (let key in json) {
-                    let newAgent = new Agent();
-                    let data = json[key];
-                    newAgent.fromJSON(data);
-                    world.agents.push(newAgent);
-                }
-                worldBusy = false;
-                // Reset value to be able to load the same file multiple times
-                load.elt.value = '';
-            });
-        }
-    }).position(60, 10);
+    load = createButton('load')
+        .position(60, 10)
+        .mousePressed(loadModels);
+
+    del = createButton('delete')
+        .position(150, 10)
+        .style('background-color', 'hsl(12, 100%, 55%)')
+        .mousePressed(() => deleteINDEXEDDB('tensorflowjs'));
+
+    // Clear indexeddb from previous tensorflowjs models
+    deleteINDEXEDDB('tensorflowjs');
 
     // Setup simulation elements ---------------------------------------------
     world = new World(height, width, foodAmount, foodBuffer, foodSize);
@@ -190,7 +210,7 @@ function checkMousePressed() {
 }
 
 function draw() {
-    if (worldBusy || world.agents.length <= 0) return;
+    if (world.agents.length <= 0) return;
     // How fast should we speed up
     let cycles = speedSlider.value();
     speedSpan.html(cycles);
@@ -203,13 +223,12 @@ function draw() {
             world.agents.forEach(agent => agent.display());
         }
 
-        if (epoch % plottingRate === 0) {
-            updatePlots();
-        }
-
         // Run the simulation "cycles" amount of time
         for (let n = 0; n < cycles; n++) {
             epoch += 1;
+            if (epoch % plottingRate === 0) {
+                updatePlots();
+            }
             world.newEpoch();
             world.growFood(circle.checked());
         }
@@ -222,7 +241,6 @@ function draw() {
             10,
             20
         );
-        // console.log(epoch, world.agents.length, tf.memory().numTensors);
     }
 
     if (checkMousePressed()) {
