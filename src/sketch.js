@@ -31,16 +31,11 @@ let epoch = 0;
 
 let worldBusy = false;
 
-/**
- * Returns a random integer between min (inclusive) and max (exclusive)
- * Using Math.round() will give you a non-uniform distribution!
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function mod(n, m) {
-    return (n % m + m) % m;
+function timeIt(fun) {
+    var t0 = performance.now();
+    fun();
+    var t1 = performance.now();
+    console.log('Call to doSomething took ' + (t1 - t0) + ' milliseconds.');
 }
 
 //p5.disableFriendlyErrors = true;
