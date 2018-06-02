@@ -82,7 +82,7 @@ class Agent {
         if (this.health > this.starthealth * 2) {
             this.hasReproduced = true;
             const child = new Agent();
-
+            child.position = this.position.copy();
             let partners = world.searchPartners(this.position, this.r);
 
             if (partners.length > 1) {
@@ -146,7 +146,6 @@ class Agent {
         let col = this.hasReproduced
             ? lerpColor(this.red, this.green, this.health)
             : color(132, 131, 53);
-        console.log(col);
         // Rotate in the direction of velocity
         let theta = this.velocity.heading() + PI / 2;
         // Translate to current location and draw a triangle

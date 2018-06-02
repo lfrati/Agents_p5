@@ -47,31 +47,13 @@ class Brain {
     mutate(parent) {
         const mutated = parent.model.getWeights().reduce((mutations, layer) => {
             const data = Array.from(layer.dataSync());
-            const numMutations = getRandomInt(0, 3);
+            const numMutations = getRandomInt(0, 5);
             for (let i = 0; i < numMutations; i++) {
                 const loc = getRandomInt(0, data.length);
                 const newVal = data[loc] + Math.random() * 2 - 1;
                 data[loc] = newVal;
             }
             let newLayer = tf.tensor(data, layer.shape);
-            // const original = layer.dataSync();
-            // const mutated = [];
-            // for (let i = 0; i < original.length; i++) {
-            //     let val = original[i];
-            //     if (Math.random() < 0.1) {
-            //         val += Math.random() * 2 - 1;
-            //     }
-            //     mutated.push(val);
-            // }
-            // let newLayer = tf.tensor(mutated, layer.shape);
-
-            // console.log(
-            //     newLayer
-            //         .sub(layer)
-            //         .sum()
-            //         .dataSync()[0]
-            // );
-
             mutations.push(newLayer);
             return mutations;
         }, []);
