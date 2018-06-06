@@ -22,6 +22,9 @@ function getBinomial(n, p) {
     if (p <= 0) {
         return 0;
     }
+    if (p >= 1) {
+        return n;
+    }
     if (p < 0.5) {
         return n - getBinomial(n, 1 - p);
     }
