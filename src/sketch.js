@@ -248,9 +248,9 @@ function setup() {
 }
 
 function draw() {
-    if (world.agents.length <= 0) return;
-
     [cycles, metabolicRate, mutationRate] = checkSliders();
+
+    if (world.agents.length <= 0) return;
 
     if (!stop.checked()) {
         background(0);
