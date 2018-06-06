@@ -19,21 +19,14 @@ class Agent {
         this.numSensors = 8;
         this.sensingRange = 100;
         this.eyes = new Eyes(this.numSensors, this.sensingRange);
-        this.brain = new Brain(this.numSensors, 32, 2);
+        this.brain = new Brain(this.numSensors, 32, 2, mutationRate);
 
-        this.mutationMean = 0;
-        this.mutationStd = 0.1;
-        this.metabolicRate = 0.02;
         this.hasReproduced = false;
     }
 
     // Add force to acceleration
     applyForce(force) {
         this.acceleration.add(force);
-    }
-
-    mod(n, m) {
-        return (n % m + m) % m;
     }
 
     // Called each time step
@@ -49,13 +42,13 @@ class Agent {
         // Update position
         this.position.add(this.velocity);
         // Make world a torus
-        this.position.x = this.mod(this.position.x, width);
-        this.position.y = this.mod(this.position.y, height);
+        this.position.x = mod(this.position.x, width);
+        this.position.y = mod(this.position.y, height);
         // Reset acceleration to 0 each cycle
         this.acceleration.mult(0);
         // Decrease health
         this.health = constrain(this.health, 0, this.maxhealth);
-        this.health -= this.metabolicRate;
+        this.health -= metabolicRate;
         // Increase score
         this.age += 1;
     }
