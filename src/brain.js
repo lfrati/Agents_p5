@@ -1,9 +1,10 @@
 //const tf = require('@tensorflow/tfjs');
 class Brain {
-    constructor(inputSize, hiddenSize, outputSize) {
+    constructor(inputSize, hiddenSize, outputSize, mutationRate) {
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
+        this.mutationRate = mutationRate;
         let inputConfig = { shape: [inputSize] };
         let hiddenConfig = {
             units: hiddenSize,
@@ -47,7 +48,7 @@ class Brain {
     mutate(parent) {
         const mutated = parent.model.getWeights().reduce((mutations, layer) => {
             const data = Array.from(layer.dataSync());
-            const numMutations = getRandomInt(0, 5);
+            const numMutations = getBinomial(data.length, this.mutationRate);
             for (let i = 0; i < numMutations; i++) {
                 const loc = getRandomInt(0, data.length);
                 const newVal = data[loc] + Math.random() * 2 - 1;

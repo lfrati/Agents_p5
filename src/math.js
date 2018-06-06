@@ -10,7 +10,7 @@ function getRandomInt(min, max) {
  * Fixes JS's native % not working for negative numbers
  */
 function mod(n, m) {
-    return (n % m + m) % m;
+    return ((n % m) + m) % m;
 }
 
 /* 
@@ -19,28 +19,20 @@ function mod(n, m) {
  * iterations is O(np) so it's pretty fast for small p values.
  */
 function getBinomial(n, p) {
+    if (p <= 0) {
+        return 0;
+    }
     if (p < 0.5) {
-        const log_q = Math.log(1.0 - p);
-        var x = 0;
-        var sum = 0;
-        while (true) {
-            sum += Math.log(Math.random()) / (n - x);
-            if (sum < log_q) {
-                return x;
-            }
-            x += 1;
+        return n - getBinomial(n, 1 - p);
+    }
+    const log_q = Math.log(1.0 - p);
+    var x = 0;
+    var sum = 0;
+    while (true) {
+        sum += Math.log(Math.random()) / (n - x);
+        if (sum < log_q) {
+            return x;
         }
-    } else {
-        p = 1 - p;
-        const log_q = Math.log(1.0 - p);
-        var x = 0;
-        var sum = 0;
-        while (true) {
-            sum += Math.log(Math.random()) / (n - x);
-            if (sum < log_q) {
-                return n - x;
-            }
-            x += 1;
-        }
+        x += 1;
     }
 }

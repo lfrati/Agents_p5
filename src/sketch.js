@@ -6,10 +6,17 @@ let stats;
 let immortal;
 let save;
 let load;
+let reset;
 
 // Slider to speed up simulation
 let speedSlider;
 let speedSpan;
+let metabolSlider;
+let metabolSpan;
+let metabolicRate = 0;
+let mutationSlider;
+let mutationSpan;
+let mutationRate = 0;
 
 // World dimensions
 let width = 640;
@@ -60,6 +67,7 @@ async function loadModels() {
 
 function saveModels() {
     var counter = 0;
+    deleteINDEXEDDB('tensorflowjs');
     console.log('Saving population at epoch ' + epoch);
     let promises = world.agents.reduce((promises, agent) => {
         promises.push(
@@ -73,47 +81,7 @@ function saveModels() {
     });
 }
 
-//p5.disableFriendlyErrors = true;
-function setup() {
-    // Operations are too small for GPU
-    tf.setBackend('cpu');
-    // Setup buttons, sliders and canvas -------------------------------------
-    let canvas = createCanvas(width, height);
-    canvas.parent('canvascontainer');
-    debug = select('#debug');
-    show = select('#show');
-    stop = select('#stop');
-    circle = select('#circle');
-    immortal = select('#immortal');
-    speedSlider = select('#speedSlider');
-    speedSpan = select('#speed');
-
-    save = createButton('save')
-        .position(10, 10)
-        .mousePressed(saveModels);
-
-    load = createButton('load')
-        .position(60, 10)
-        .mousePressed(loadModels);
-
-    del = createButton('delete')
-        .position(150, 10)
-        .style('background-color', 'hsl(12, 100%, 55%)')
-        .mousePressed(() => deleteINDEXEDDB('tensorflowjs'));
-
-    // Clear indexeddb from previous tensorflowjs models
-    deleteINDEXEDDB('tensorflowjs');
-
-    // Setup simulation elements ---------------------------------------------
-    world = new World(height, width, foodAmount, foodBuffer, foodSize);
-    for (let i = 0; i < numAgents; i++) {
-        let agent = new Agent();
-        let randomVelocity = p5.Vector.random2D();
-        randomVelocity.setMag(agent.maxspeed);
-        agent.acceleration = randomVelocity;
-        world.agents.push(agent);
-    }
-
+function setupPlotly() {
     // Setup plotting --------------------------------------------------------
     var trace1 = {
         y: [],
@@ -126,6 +94,7 @@ function setup() {
         mode: 'lines',
         name: 'agents resources'
     };
+
     var data = [trace1, trace2];
 
     var layout = {
@@ -209,11 +178,79 @@ function checkMousePressed() {
     return mouseIsPressed && 0 < mouseX && mouseX < width && 0 < mouseY && mouseY < height;
 }
 
-function draw() {
-    if (world.agents.length <= 0) return;
+function checkSliders() {
     // How fast should we speed up
     let cycles = speedSlider.value();
     speedSpan.html(cycles);
+    let metabolicRate = metabolSlider.value() / 1000;
+    metabolSpan.html(metabolicRate);
+    let mutationRate = mutationSlider.value() / 100;
+    mutationSpan.html(mutationRate);
+    return [cycles, metabolicRate, mutationRate];
+}
+
+function populateWorld() {
+    epoch = 0;
+    // Setup simulation elements ---------------------------------------------
+    world = new World(height, width, foodAmount, foodBuffer, foodSize);
+    for (let i = 0; i < numAgents; i++) {
+        let agent = new Agent();
+        let randomVelocity = p5.Vector.random2D();
+        randomVelocity.setMag(agent.maxspeed);
+        agent.acceleration = randomVelocity;
+        world.agents.push(agent);
+    }
+}
+
+//p5.disableFriendlyErrors = true;
+function setup() {
+    // Operations are too small for GPU
+    tf.setBackend('cpu');
+    // Setup buttons, sliders and canvas -------------------------------------
+    let canvas = createCanvas(width, height);
+    canvas.parent('canvascontainer');
+    debug = select('#debug');
+    show = select('#show');
+    stop = select('#stop');
+    circle = select('#circle');
+    immortal = select('#immortal');
+    speedSlider = select('#speedSlider');
+    speedSpan = select('#speed');
+    metabolSlider = select('#metabolSlider');
+    metabolSpan = select('#metabol');
+    mutationSlider = select('#mutationSlider');
+    mutationSpan = select('#mut');
+    mutationSlider.mousePressed(() => console.log('Pressed'));
+
+    save = createButton('save')
+        .position(10, 10)
+        .mousePressed(saveModels);
+
+    load = createButton('load')
+        .position(60, 10)
+        .mousePressed(loadModels);
+
+    reset = createButton('reset')
+        .position(110, 10)
+        .mousePressed(() => populateWorld());
+
+    // del = createButton('delete')
+    //     .position(200, 10)
+    //     .style('background-color', 'hsl(12, 100%, 55%)')
+    //     .mousePressed(() => deleteINDEXEDDB('tensorflowjs'));
+
+    // Clear indexeddb from previous tensorflowjs models
+    deleteINDEXEDDB('tensorflowjs');
+
+    setupPlotly();
+
+    populateWorld();
+}
+
+function draw() {
+    if (world.agents.length <= 0) return;
+
+    [cycles, metabolicRate, mutationRate] = checkSliders();
 
     if (!stop.checked()) {
         background(0);
