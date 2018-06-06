@@ -11,8 +11,7 @@
 	<!-- Load Plotly.js -->
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<!-- Load TensorFlow.js -->
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2">
-	</script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2"></script>
 	<!-- Load p5.js -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.min.js"></script>
@@ -37,6 +36,16 @@
 				Speed:
 				<input id="speedSlider" type="range" min="1" max="10" value="1">
 				<span id="speed">1</span>
+			</p>
+			<p>
+				Metabolic Rate:
+				<input id="metabolSlider" type="range" min="1" max="50" value="20">
+				<span id="metabol"></span>
+			</p>
+			<p>
+				Mutation Prob:
+				<input id="mutationSlider" type="range" min="0" max="100" value="5">
+				<span id="mut"></span>
 			</p>
 			<p>
 				Debug:
